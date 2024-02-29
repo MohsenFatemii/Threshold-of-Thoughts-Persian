@@ -32,9 +32,12 @@
 #### نمونه‌ای از تصویر ترکیبی نسبی با ترکیب خاکستری‌سازی و دوقطبی‌سازی ۳۰ درصد پیکسل‌ها :
 ![picture6](https://github.com/MohsenFatemii/Threshold-of-Thoughts-Persian/assets/20028598/bea0bf30-82ec-4e89-8efe-7a63f3686e2b)
 
+#### نمونه‌ای از تصویر ترکیبی نسبی تصادفی با ترکیب خاکستری‌سازی و دوقطبی‌سازی و رنگ‌آمیزی تصادفی ۱۰۰ درصد پیکسل‌ها :
+![picture7](https://github.com/MohsenFatemii/Threshold-of-Thoughts-Persian/assets/20028598/a5117014-d1d9-42e3-b487-0824b1adc355)
+
 #### نمونه‌ای از تصویر تصادفی با سیاه و سفید کردن پیکسل‌ها به صورت کاملا تصادفی :
-![picture7](https://github.com/MohsenFatemii/Threshold-of-Thoughts-Persian/assets/20028598/90728b9e-8aca-448f-9e11-d7cd058f7c16)
+![picture8](https://github.com/MohsenFatemii/Threshold-of-Thoughts-Persian/assets/20028598/90728b9e-8aca-448f-9e11-d7cd058f7c16)
 
 #### نمونه‌ای از تصویر تضاد با وارونه‌سازی رنگ تمامی پیکسل‌ها :
-![picture8](https://github.com/MohsenFatemii/Threshold-of-Thoughts-Persian/assets/20028598/1cf3018a-76fd-4502-851a-54bbdc2fa881)
+![picture9](https://github.com/MohsenFatemii/Threshold-of-Thoughts-Persian/assets/20028598/1cf3018a-76fd-4502-851a-54bbdc2fa881)
 
