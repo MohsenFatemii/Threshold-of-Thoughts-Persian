@@ -100,6 +100,7 @@
             <option value="random-like" title="در این نگرش، درصد مشخصی از پیکسل‌ها کاملا به صورت تصادفی به رنگ سیاه یا سفید درمی‌آیند.">شبه‌تصادفی</option>        
             <option value="relative-binary" title="در این نگرش، درصد مشخصی از پیکسل‌ها به صورت تصادفی، با رویکرد دوقطبی و با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.">دوقطبی نسبی</option>      
             <option value="mixed" title="در این نگرش درصد مشخصی از پیکسل‌ها به صورت تصادفی، همزمان با رویکرد خاکستری و دوقطبی و با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.">ترکیبی نسبی</option>
+            <option value="random-mixed" title="در این نگرش درصد مشخصی از پیکسل‌ها به صورت تصادفی، همزمان با رویکرد خاکستری و دوقطبی و تصادفی با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.">ترکیبی نسبی تصادفی</option>
             <option value="completely-random" title="در این نگرش، تمامی پیکسل‌ها بدون آستانه‌ی رنگی مشخص و کاملا به صورت تصادفی، به رنگ سیاه یا سفید تغییر پیدا می‌کنند.">تصادفی</option> 
             <option value="invert" title="در این نگرش، تمامی پیکسل‌ها با رنگ وارونه‌ی خود جایگزین می‌شوند.">تضاد</option>           
         </select>
@@ -177,6 +178,9 @@
                     break;
                 case 'mixed':
                     labelElement.innerHTML ="<label>در این نگرش درصد مشخصی از پیکسل‌ها به صورت تصادفی، همزمان با رویکرد خاکستری و دوقطبی و با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.</label>";
+                    break;
+                case 'random-mixed':
+                    labelElement.innerHTML ="<label>در این نگرش درصد مشخصی از پیکسل‌ها به صورت تصادفی، همزمان با رویکرد خاکستری و دوقطبی و تصادفی با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.</label>";
                     break;
                 case 'gray':
                     labelElement.innerHTML ="<label>در این نگرش به صورت تصادفی، درصد مشخصی از پیکسل‌ها با حد وسط رنگ‌ها یعنی رنگ خاکستری جایگزین می‌شوند.</label>";
@@ -264,6 +268,13 @@
                     displayedArray = staticArray.map(row => row.map(value => Math.random() * 100 < mixPercentage ? (Math.random() * 100 < 34? 128 :(value > thresholdValue ? 255 : 0)) : value));
                     break;
 
+                case 'random-mixed':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => Math.random() * 100 < mixPercentage ? (Math.random() * 100 < 26? 128 :(Math.random() * 100 < 33:(Math.random() > 0.5 ? 255 : 0)):(value > thresholdValue ? 255 : 0)) : value));
+                    break;
+
                 case 'gray':
                     // Update the color square and color gradient
                     updateColorSquare(thresholdValue);
@@ -315,7 +326,7 @@
             updateColorGradient(255);
 
             const mixedOptionContainer = document.getElementById('mixedOptionContainer');
-            if (colorMode === 'mixed' ||colorMode === 'relative-binary' || colorMode === 'random-like' || colorMode === 'gray') {
+            if (colorMode === 'mixed' || colorMode === 'random-mixed' || colorMode === 'relative-binary' || colorMode === 'random-like' || colorMode === 'gray') {
                 mixedOptionContainer.style.display = 'block';
             } else if(colorMode==='invert') {
                 handleColorModeChange(255);
