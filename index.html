@@ -261,7 +261,7 @@
                     // Update the color square and color gradient
                     updateColorSquare(thresholdValue);
                     updateColorGradient(255);
-                    displayedArray = staticArray.map(row => row.map(value => Math.random() * 100 < mixPercentage ? (value => Math.random() * 100 < 34? 128 :value > thresholdValue ? 255 : 0) : value));
+                    displayedArray = staticArray.map(row => row.map(value => Math.random() * 100 < mixPercentage ? (Math.random() * 100 < 34? 128 :(value > thresholdValue ? 255 : 0)) : value));
                     break;
 
                 case 'gray':
