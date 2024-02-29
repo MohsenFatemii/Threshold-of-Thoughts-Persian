@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threshold Grayscale Image</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+
+        @font-face {
+          font-family: 'Vazir';
+          src: url('Fonts/Vazir.woff2') format('woff2'),
+               url('Fonts/Vazir.woff') format('woff');
+        }
+        html *
+        {
+           font-family: Vazir;
+        }
+        canvas {
+            border: 1px solid #000;
+            display: block;
+            margin: auto;
+            max-width: 100%; /* Make the canvas responsive */
+            height: auto; /* Maintain the aspect ratio */
+        }
+
+        #colorContainer {
+            margin: 20px;
+            text-align: center;
+        }
+
+        #resetButton {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #colorGradientContainer {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #colorGradient {
+            width: 200px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        #colorSquareContainer {
+            margin: 20px;
+            text-align: center;
+        }
+
+        #colorSquare {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #000;
+        }
+
+        #colorModeContainer {
+            margin: 20px;
+            text-align: center;
+        }
+
+        #mixedOptionContainer {
+            margin: 20px;
+            text-align: center;
+        }
+
+        #imageSelectContainer {
+            margin: 20px;
+            text-align: center;   
+        }
+
+        #descriptionContainer {
+            margin: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1063" height="598"></canvas>
+    <div id="imageSelectContainer"  style="direction:rtl">
+        <label for="imageSelect">انتخاب تصویر :</label>
+        <select class="box"  id="imageSelect">
+            <option value="azadi.png">برج آزادی</option>
+            <option value="butterfly.png">پروانه</option>
+            <option value="fountain.png">آب‌نما</option>
+            <option value="horse.png">اسب</option>
+            <option value="lake.png">دریاچه</option>
+        </select>
+    </div>
+
+    <div id="colorModeContainer" style="direction:rtl;">
+        <label for="colorMode">مدل رنگ‌آمیزی:</label>
+        <select class="box" id="colorMode">
+            <option value="binary" title="در این نگرش، جهان به دو رنگ سیاه و سفید تقسیم‌بندی می‌شود و تمام رنگ‌ها، با توجه به آستانه‌ی رنگ از پیش تعیین شده، به دو رنگ سیاه یا سفید تغییر می‌کنند.">دوقطبی</option>
+            <option value="gray" title="در این نگرش، به صورت تصادفی، درصد مشخصی از پیکسل‌ها با حد وسط رنگ‌ها یعنی رنگ خاکستری جایگزین می‌شوند.">خاکستری</option>              
+            <option value="random-like" title="در این نگرش، درصد مشخصی از پیکسل‌ها کاملا به صورت تصادفی به رنگ سیاه یا سفید درمی‌آیند.">شبه‌تصادفی</option>        
+            <option value="relative-binary" title="در این نگرش، درصد مشخصی از پیکسل‌ها به صورت تصادفی، با رویکرد دوقطبی و با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.">دوقطبی نسبی</option>      
+            <option value="mixed" title="در این نگرش درصد مشخصی از پیکسل‌ها به صورت تصادفی، همزمان با رویکرد خاکستری و دوقطبی و با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.">ترکیبی نسبی</option>
+            <option value="completely-random" title="در این نگرش، تمامی پیکسل‌ها بدون آستانه‌ی رنگی مشخص و کاملا به صورت تصادفی، به رنگ سیاه یا سفید تغییر پیدا می‌کنند.">تصادفی</option> 
+            <option value="invert" title="در این نگرش، تمامی پیکسل‌ها با رنگ وارونه‌ی خود جایگزین می‌شوند.">تضاد</option>           
+        </select>
+    </div>
+
+    <div id="colorContainer" style="direction:rtl">
+        <div id="colorGradientContainer">
+            <canvas id="colorGradient" width="200" height="20"></canvas>
+        </div>
+        <button id="resetButton">بازنشانی تصویر</button>
+    </div>
+    <div id="colorSquareContainer"  style="direction:rtl">
+        <label>رنگ انتخاب شده :</label>
+        <canvas id="colorSquare" width="20" height="20"></canvas>
+    </div>
+
+    <div id="mixedOptionContainer" style="display:none;direction:rtl">
+        <label for="mixPercentage">درصد:</label>
+        <input type="number" id="mixPercentage" min="1" max="100" value="50">
+    </div>
+    <div id="descriptionContainer" style="direction:rtl">
+        <label>توضیحات :</label>
+        <br>
+        <label id="Description">در این نگرش جهان به دو رنگ سیاه و سفید تقسیم‌بندی می‌شود و تمام رنگ‌ها، با توجه به آستانه‌ی رنگ از پیش تعیین شده، به دو رنگ سیاه یا سفید تغییر می‌کنند.</label>
+    </div>
+
+    <script>
+
+
+        // Predefined static grayscale array
+        // const staticArray = openFile("file.png");
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const img = new Image();
+        img.src = 'Images/azadi.png';
+
+        let staticArray = []; // Grayscale image data array
+
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0); // Draw the image at (0, 0) on the canvas
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const pixelData = imageData.data;
+
+            for (let y = 0; y < height; y++) {
+                const row = [];
+                for (let x = 0; x < width; x++) {
+                    const i = (y * width + x) * 4; // Calculate the index
+                    const grayscaleValue = pixelData[i]; // Red channel value
+                    row.push(grayscaleValue);
+                }
+                staticArray.push(row);
+            }
+        };
+
+        
+
+
+        // Copy of the static array for display
+        let displayedArray = staticArray.map(row => [...row]);
+
+        function setDescription(group){
+            const labelElement = document.getElementById("Description");
+            switch (group){
+                case 'binary':
+                    labelElement.innerHTML ="<label>در این نگرش جهان به دو رنگ سیاه و سفید تقسیم‌بندی می‌شود و تمام رنگ‌ها، با توجه به آستانه‌ی رنگ از پیش تعیین شده، به دو رنگ سیاه یا سفید تغییر می‌کنند.</label>";
+                    break;
+                case 'relative-binary':
+                    labelElement.innerHTML ="<label>در این نگرش درصد مشخصی از پیکسل‌ها به صورت تصادفی، با رویکرد دوقطبی و با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.</label>";
+                    break;
+                case 'mixed':
+                    labelElement.innerHTML ="<label>در این نگرش درصد مشخصی از پیکسل‌ها به صورت تصادفی، همزمان با رویکرد خاکستری و دوقطبی و با توجه به آستانه رنگ مشخص شده، رنگ‌آمیزی می‌شوند.</label>";
+                    break;
+                case 'gray':
+                    labelElement.innerHTML ="<label>در این نگرش به صورت تصادفی، درصد مشخصی از پیکسل‌ها با حد وسط رنگ‌ها یعنی رنگ خاکستری جایگزین می‌شوند.</label>";
+                    break;
+                case 'random-like':
+                    labelElement.innerHTML ="<label>در این نگرش  درصد مشخصی از پیکسل‌ها کاملا به صورت تصادفی به رنگ سیاه یا سفید درمی‌آیند.</label>";
+                    break;
+                case 'completely-random':
+                    labelElement.innerHTML ="<label>در این نگرش تمامی پیکسل‌ها بدون آستانه‌ی رنگی مشخص و کاملا به صورت تصادفی، به رنگ سیاه یا سفید تغییر پیدا می‌کنند.</label>";
+                    break;
+                case 'invert':
+                    labelElement.innerHTML ="<label>در این نگرش، تمامی پیکسل‌ها با رنگ وارونه‌ی خود جایگزین می‌شوند.</label>";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Function to draw the grayscale image on the canvas
+        function drawImage(array) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const pixelSize = canvas.width / 1063;
+
+            array.forEach((row, rowIndex) => {
+                row.forEach((value, colIndex) => {
+                    ctx.fillStyle = `rgb(${value},${value},${value})`;
+                    ctx.fillRect(colIndex * pixelSize, rowIndex * pixelSize, pixelSize, pixelSize);
+                });
+            });
+        }
+
+        // Function to update the color square based on the selected threshold
+        function updateColorSquare(threshold) {
+            const colorSquareCanvas = document.getElementById('colorSquare');
+            const ctx = colorSquareCanvas.getContext('2d');
+
+            ctx.clearRect(0, 0, colorSquareCanvas.width, colorSquareCanvas.height);
+            ctx.fillStyle = `rgb(${threshold},${threshold},${threshold})`;
+            ctx.fillRect(0, 0, colorSquareCanvas.width, colorSquareCanvas.height);
+        }
+
+        // Function to update the color gradient based on the selected threshold
+        function updateColorGradient(threshold) {
+            const colorGradientCanvas = document.getElementById('colorGradient');
+            const ctx = colorGradientCanvas.getContext('2d');
+
+            // Clear previous gradient
+            ctx.clearRect(0, 0, colorGradientCanvas.width, colorGradientCanvas.height);
+
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, colorGradientCanvas.width, 0);
+            gradient.addColorStop(0, `rgb(0, 0, 0)`);
+            gradient.addColorStop(1, `rgb(${threshold},${threshold},${threshold})`);
+
+            // Fill rectangle with gradient
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, colorGradientCanvas.width, colorGradientCanvas.height);
+        }
+
+        // Function to handle color mode change
+        function handleColorModeChange(thresholdValue) {
+            const colorMode = document.getElementById('colorMode').value;
+            displayedArray = staticArray.map(row => [...row]);
+            const mixPercentage = document.getElementById('mixPercentage').value;
+            switch (colorMode) {
+                case 'binary':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => value > thresholdValue ? 255 : 0));
+                    break;
+                case 'relative-binary':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => Math.random() * 100 < mixPercentage ? (value > thresholdValue ? 255 : 0) : value));
+                    break;
+                
+                case 'mixed':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => Math.random() * 100 < mixPercentage ? (value => Math.random() * 100 < 34? 128 :value > thresholdValue ? 255 : 0) : value));
+                    break;
+
+                case 'gray':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => Math.random() * 100 < mixPercentage ? 128 : value));
+                    break;
+
+                case 'random-like':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => Math.random() *100 < mixPercentage/2 ? 255 : value));
+                    displayedArray = displayedArray.map(row => row.map(value => Math.random() *100 < mixPercentage/2 ? 0 : value));
+                    break;
+
+                case 'completely-random':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => Math.random() > 0.5 ? 255 : 0));
+                    break;
+                case 'invert':
+                    // Update the color square and color gradient
+                    updateColorSquare(thresholdValue);
+                    updateColorGradient(255);
+                    displayedArray = staticArray.map(row => row.map(value => (255 - value)));
+                    break;
+                default:
+                    break;
+            }
+
+            // Draw the image using the displayed array
+            drawImage(displayedArray);
+        }
+
+        // Event listener for color mode change
+        document.getElementById('colorMode').addEventListener('change', function () {
+            const colorMode = this.value;
+            setDescription(colorMode);
+
+            // Reseting image
+            displayedArray = staticArray.map(row => [...row]);
+
+            // Draw the image using the displayed array
+            drawImage(displayedArray);
+
+            // Update the color square and color gradient
+            updateColorSquare(255);
+            updateColorGradient(255);
+
+            const mixedOptionContainer = document.getElementById('mixedOptionContainer');
+            if (colorMode === 'mixed' ||colorMode === 'relative-binary' || colorMode === 'random-like' || colorMode === 'gray') {
+                mixedOptionContainer.style.display = 'block';
+            } else if(colorMode==='invert') {
+                handleColorModeChange(255);
+            }else
+                mixedOptionContainer.style.display = 'none';
+            
+            // handleColorModeChange(255); // Reset threshold when changing color mode
+        });
+
+        // Event listener for mix percentage change
+        document.getElementById('mixPercentage').addEventListener('change', function () {
+            handleColorModeChange(255); // Reset threshold when changing mix percentage
+        });
+
+
+        // Update the threshold value and redraw the image when the color gradient is clicked
+        document.getElementById('colorGradient').addEventListener('click', function (e) {
+            const rect = this.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const thresholdValue = Math.round((mouseX / rect.width) * 255);
+
+            // Update the color square and color gradient
+            updateColorSquare(thresholdValue);
+
+            // Draw the image using the displayed array
+            handleColorModeChange(thresholdValue);
+        });
+
+        // Reset button click handler
+        document.getElementById('resetButton').addEventListener('click', function () {
+            // Restore the original array and reset the threshold
+            displayedArray = staticArray.map(row => [...row]);
+
+            // Draw the image using the displayed array
+            drawImage(displayedArray);
+
+            // Update the color square and color gradient
+            updateColorSquare(255);
+            updateColorGradient(255);
+        });
+
+        // Generate the initial image using the displayed array
+        window.onload = function () {
+            // Draw the initial image using the displayed array
+            drawImage(displayedArray);
+
+            // Update the initial color square and color gradient
+            updateColorSquare(255);
+            updateColorGradient(255);
+        };
+
+        // Function to load the selected image onto the canvas
+        function loadImage(selectedImage) {
+            const img = new Image();
+            img.src = "Images/"+selectedImage;
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0); // Draw the image at (0, 0) on the canvas
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixelData = imageData.data;
+
+                const width = canvas.width;
+                const height = canvas.height;
+
+                staticArray = []; // Clear the existing staticArray
+
+                for (let y = 0; y < height; y++) {
+                    const row = [];
+                    for (let x = 0; x < width; x++) {
+                        const i = (y * width + x) * 4; // Calculate the index
+                        const grayscaleValue = pixelData[i]; // Red channel value
+                        row.push(grayscaleValue);
+                    }
+                    staticArray.push(row);
+                }
+
+                // Draw the image using the displayed array
+                drawImage(staticArray);
+            };
+        }
+
+        document.getElementById('imageSelect').addEventListener('change', function () {
+            const selectedImage = this.value;
+            loadImage(selectedImage);
+        });
+    </script>
+</body>
+</html>
